@@ -232,6 +232,7 @@
                         <span class="input-group-text border-end-0 bg-white"><i class="fa-solid fa-search text-muted"></i></span>
                         <input type="text" id="searchInput" class="form-control border-start-0 ps-0 hidden bg-white" placeholder="Cari..." onkeyup="window.filterData()">
                     </div>
+                    <button class="btn btn-info shadow-sm px-3 fw-bold hidden text-white" style="border-radius: 12px;" id="btnPreviewPiket" onclick="window.previewJadwalPiket()"><i class="fa-solid fa-file-invoice me-1"></i> Preview Piket</button>
                     <button class="btn btn-light border shadow-sm px-3 fw-bold hidden text-primary-custom" style="border-radius: 12px;" id="btnCetakDokumentasi" onclick="window.cetakDokumentasiKunjungan()"><i class="fa-solid fa-images me-1"></i> Lampiran Foto</button>
                     <button class="btn btn-light border shadow-sm px-3 fw-bold hidden" style="border-radius: 12px;" id="btnExportData" onclick="window.eksporRekapan()"><i class="fa-solid fa-print me-1"></i> Rekap PDF</button>
                     <button class="btn btn-primary-custom shadow-sm px-4 fw-bold hidden" id="btnAddData" onclick="window.bukaModalData()"><i class="fa-solid fa-plus me-2"></i> Tambah Baru</button>
@@ -318,7 +319,7 @@
             return fetch(GAS_URL, {
                 method: 'POST',
                 redirect: 'follow', 
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // text/plain hindari preflight
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ action: actionName, data: payloadData })
             }).then(res => res.json());
         }
@@ -338,7 +339,7 @@
             'UltahKaryawan': { category: 'Personalia', title: 'Ultah Karyawan', icon: 'fa-cake-candles', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'TanggalLahir', label: 'Tgl Lahir', type: 'date'},{key: 'Usia', label: 'Usia', type: 'readonly'},{key: 'NamaPegawai', label: 'Nama Pegawai', type: 'text'},{key: 'Divisi', label: 'Unit', type: 'text'},{key: 'UcapanBingkisan', label: 'Status Bingkisan', type: 'select', options: ['Belum Diberikan', 'Sudah Diberikan']}] },
             'KunjunganSosial': { category: 'Personalia', title: 'Kunjungan Sosial', icon: 'fa-hospital-user', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'Tanggal', label: 'Tgl Kunjungan', type: 'date'},{key: 'Jenis', label: 'Jenis', type: 'select', options: ['Sakit', 'Melahirkan', 'Takziah', 'Lainnya']},{key: 'NamaTujuan', label: 'Tujuan', type: 'text'},{key: 'AlamatRS', label: 'Alamat', type: 'text'},{key: 'NominalBarang', label: 'Nominal', type: 'text'},{key: 'Foto', label: 'Upload Foto', type: 'image'}] },
             'DataGuruTendik': { category: 'Data Staff', title: 'Data Guru Tendik', icon: 'fa-chalkboard-user', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'NamaLengkap', label: 'Nama', type: 'text'},{key: 'PendidikanTerakhir', label: 'Pendidikan', type: 'text'},{key: 'Status', label: 'Status', type: 'select', options: ['PNS', 'PPPPK Penuh Waktu', 'PPPK Paruh Waktu', 'GTT', 'PTT']},{key: 'Golongan', label: 'Golongan', type: 'text'},{key: 'NIP', label: 'NIP', type: 'text'},{key: 'Serdik', label: 'Serdik', type: 'text'},{key: 'NUPTK', label: 'NUPTK', type: 'text'},{key: 'MasukSejak', label: 'Masuk Sejak', type: 'date'},{key: 'LamaKerja', label: 'Lama Kerja', type: 'readonly'},{key: 'Jabatan', label: 'Jabatan', type: 'text'},{key: 'Kontak', label: 'Kontak', type: 'text'}] },
-            'JadwalPiket': { category: 'Data Staff', title: 'Jadwal Piket', icon: 'fa-clock-rotate-left', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'Hari', label: 'Hari', type: 'select', options: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat']},{key: 'DaftarPetugas', label: 'Petugas', type: 'textarea'},{key: 'Area', label: 'Area', type: 'text'},{key: 'Keterangan', label: 'Keterangan', type: 'text'}] },
+            'JadwalPiket': { category: 'Data Staff', title: 'Jadwal Piket', icon: 'fa-clock-rotate-left', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'Hari', label: 'Hari', type: 'select', options: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat']},{key: 'KategoriTugas', label: 'Kategori Tugas', type: 'select', options: ['Salam Pagi', 'Pembaca Doa Masuk', 'Guru Piket', 'Pembaca Doa Pulang', 'Imam Solat Duhur', 'Lainnya']},{key: 'DaftarPetugas', label: 'Daftar Petugas', type: 'multi-select-guru'},{key: 'Keterangan', label: 'Keterangan Tambahan', type: 'text'}] },
             'JadwalObserver': { category: 'Data Staff', title: 'Jadwal Observer', icon: 'fa-eye', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'Tanggal', label: 'Tanggal', type: 'date'},{key: 'NamaObserver', label: 'Observer', type: 'text'},{key: 'GuruDiobservasi', label: 'Guru Diobservasi', type: 'text'},{key: 'KelasMapel', label: 'Mapel', type: 'text'},{key: 'Keterangan', label: 'Keterangan', type: 'text'}] },
             'Vendor': { category: 'Eksternal', title: 'Data Vendor', icon: 'fa-truck-fast', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'NamaInstansi', label: 'Vendor', type: 'text'},{key: 'KategoriInstansi', label: 'Kategori', type: 'text'},{key: 'KontakPerson', label: 'Kontak', type: 'text'},{key: 'BentukKerjasama', label: 'Kerjasama', type: 'text'},{key: 'Keterangan', label: 'Keterangan', type: 'textarea'}] },
             'Dokumentasi': { category: 'Eksternal', title: 'Dokumentasi Publikasi', icon: 'fa-camera-retro', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'Tanggal', label: 'Tanggal', type: 'date'},{key: 'NamaKegiatan', label: 'Nama Kegiatan', type: 'text'},{key: 'Deskripsi', label: 'Deskripsi', type: 'textarea'},{key: 'LinkMedia', label: 'Link Media', type: 'url'}] },
@@ -436,6 +437,10 @@
         };
 
         window.setupDashboard = function() {
+            window.listGuruTendik = [];
+            panggilBackend('fetchSheetData', {sheetName: 'DataGuruTendik'}).then(res => {
+                if(res.success) window.listGuruTendik = res.data.map(d => d.NamaLengkap).filter(n => n);
+            });
             window.switchView('appLayout');
             document.getElementById('userNameDisplay').innerText = window.currentUser.nama; document.getElementById('userRoleDisplay').innerText = window.currentUser.role; document.getElementById('userAvatar').src = window.currentUser.foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(window.currentUser.nama) + '&background=5b6cff&color=fff&bold=true';
             if(window.globalSettings && window.globalSettings.NamaSekolah) document.getElementById('publicNamaSekolah').innerText = 'HUMAS ' + window.globalSettings.NamaSekolah;
@@ -480,13 +485,14 @@
 
             window.activeMenu = menuKey; document.getElementById('pageTitle').innerText = window.SCHEMA[menuKey].title; document.getElementById('pageCategory').innerText = window.SCHEMA[menuKey].category;
             
-            if (menuKey === 'Dashboard') { ['searchInput', 'filterBulan', 'btnAddData', 'btnExportData', 'btnCetakDokumentasi'].forEach(id => document.getElementById(id).classList.add('hidden')); window.loadDashboard(); return; }
+            if (menuKey === 'Dashboard') { ['searchInput', 'filterBulan', 'btnAddData', 'btnExportData', 'btnCetakDokumentasi', 'btnPreviewPiket'].forEach(id => document.getElementById(id).classList.add('hidden')); window.loadDashboard(); return; }
 
             let fBulan = document.getElementById('filterBulan');
             if (menuKey === 'DisposisiChecklist' || menuKey === 'UltahKaryawan') fBulan.classList.remove('hidden'); else fBulan.classList.add('hidden'); fBulan.value = '';
             document.getElementById('searchInput').classList.remove('hidden'); document.getElementById('searchInput').value = ''; document.getElementById('btnAddData').classList.remove('hidden');
             if (menuKey === 'Users' || menuKey === 'Pengaturan') document.getElementById('btnExportData').classList.add('hidden'); else document.getElementById('btnExportData').classList.remove('hidden');
             if (menuKey === 'KunjunganSosial') document.getElementById('btnCetakDokumentasi').classList.remove('hidden'); else document.getElementById('btnCetakDokumentasi').classList.add('hidden');
+            if (menuKey === 'JadwalPiket') document.getElementById('btnPreviewPiket').classList.remove('hidden'); else document.getElementById('btnPreviewPiket').classList.add('hidden');
             
             window.fetchData();
         };
@@ -621,6 +627,17 @@
                 if (col.type === 'image') {
                     let previewClass = (val && val.startsWith('data:image')) ? '' : 'hidden'; let imgSrc = (val && val.startsWith('data:image')) ? val : '';
                     html += `<label class="form-label fw-bold small text-muted mb-1">${col.label}</label><div class="d-flex align-items-center gap-3 mb-2"><img id="preview_${col.key}" src="${imgSrc}" class="${previewClass} rounded shadow-sm border" style="width:80px; height:80px; object-fit:cover;"><input type="file" class="form-control" accept="image/*" onchange="window.handleImageUpload(event, '${col.key}')"></div><input type="hidden" id="input_${col.key}" value="${val}">`;
+                } else if (col.type === 'multi-select-guru') {
+                    let guruOptions = window.listGuruTendik || [];
+                    let selectedGurus = val ? val.split(', ') : [];
+                    html += `<label class="form-label fw-bold small text-muted mb-1">${col.label}</label><div class="border rounded p-2 form-control bg-light" style="max-height: 160px; overflow-y: auto;">`;
+                    if(guruOptions.length === 0) html += '<small class="text-danger">Data Guru belum dimuat atau kosong.</small>';
+                    guruOptions.forEach((guru, idx) => {
+                        let checked = selectedGurus.includes(guru) ? 'checked' : '';
+                        let idCheck = 'guru_' + idx;
+                        html += `<div class="form-check"><input class="form-check-input guru-checkbox" type="checkbox" value="${guru}" id="${idCheck}" ${checked}><label class="form-check-label small" for="${idCheck}">${guru}</label></div>`;
+                    });
+                    html += `</div><input type="hidden" id="input_${col.key}" value="${val}">`;
                 } else {
                     html += '<div class="form-floating">';
                     if (col.type === 'textarea') html += `<textarea class="form-control" id="input_${col.key}" style="height: 100px">${val}</textarea>`; 
@@ -631,6 +648,21 @@
                 html += '</div>';
             });
             document.getElementById('dynamicFormBody').innerHTML = '<div class="row g-2">' + html + '</div>';
+
+            setTimeout(() => {
+                let checkBoxes = document.querySelectorAll('.guru-checkbox');
+                if(checkBoxes.length > 0) {
+                    checkBoxes.forEach(cb => {
+                        cb.addEventListener('change', () => {
+                            let schemaMulti = schema.columns.find(c => c.type === 'multi-select-guru');
+                            if(schemaMulti) {
+                                let selected = Array.from(document.querySelectorAll('.guru-checkbox:checked')).map(c => c.value);
+                                document.getElementById('input_' + schemaMulti.key).value = selected.join(', ');
+                            }
+                        });
+                    });
+                }
+            }, 200);
 
             if (window.activeMenu === 'DisposisiChecklist') {
                 const statusEl = document.getElementById('input_Status'); const wrapKet = document.getElementById('wrap_Keterangan');
@@ -712,7 +744,6 @@
         window.bukaModalQR = function(row) {
             document.getElementById('qrNamaRapat').innerText = row.Rapat; bootstrap.Modal.getOrCreateInstance(document.getElementById('modalQRCode')).show();
             document.getElementById('qrcode-container').innerHTML = '<div class="spinner-border text-primary-custom"></div>'; document.getElementById('qrLinkInput').value = 'Memuat URL...';
-            // Frontend sekarang menggunakan URL-nya sendiri (Vercel) untuk membuat QR
             const baseUrl = window.location.href.split('?')[0];
             window.generateQRCodeImage(row, baseUrl);
         };
@@ -755,7 +786,6 @@
             }).catch(e => { window.endLoading(); Swal.fire('Error', String(e), 'error'); });
         };
 
-        // CETAK LAMPIRAN DOKUMENTASI (KUNJUNGAN SOSIAL)
         window.cetakDokumentasiKunjungan = function() {
             window.startLoading('Menyiapkan Lampiran...');
             setTimeout(function() {
@@ -774,7 +804,6 @@
             }, 500);
         };
 
-        // EKSPOR PDF & DOKUMEN
         window.eksporRekapan = function() {
             window.startLoading('Menyiapkan Rekapan PDF...');
             setTimeout(function() {
@@ -867,6 +896,76 @@
         };
 
         window.cetakDisposisi = function(row) { window.cetakDokumen(row, 'disposisi'); };
+
+        window.previewJadwalPiket = function() {
+            Swal.fire({
+                title: 'Preview Jadwal Piket',
+                html: '<select id="previewHari" class="form-select mb-3"><option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option><option value="Kamis">Kamis</option><option value="Jumat">Jumat</option></select>' +
+                      '<input type="date" id="previewTanggal" class="form-control" value="'+new Date().toISOString().split('T')[0]+'">',
+                showCancelButton: true,
+                confirmButtonText: '<i class="fa-solid fa-print"></i> Cetak',
+                confirmButtonColor: '#5b6cff',
+                preConfirm: () => {
+                    return {
+                        hari: document.getElementById('previewHari').value,
+                        tanggal: document.getElementById('previewTanggal').value
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.cetakPreviewPiket(result.value.hari, result.value.tanggal);
+                }
+            });
+        };
+
+        window.cetakPreviewPiket = function(hari, tanggalStr) {
+            let dataHariIni = window.currentData.filter(d => d.Hari === hari);
+            let grouped = {};
+            dataHariIni.forEach(d => {
+                let kat = d.KategoriTugas || 'Lainnya';
+                if(!grouped[kat]) grouped[kat] = [];
+                let petugasList = (d.DaftarPetugas || '').split(',').map(p => p.trim()).filter(p => p);
+                grouped[kat] = grouped[kat].concat(petugasList);
+            });
+
+            let tglIndo = window.formatDateIndo(tanggalStr);
+            let tglFull = `${hari}, ${tglIndo.tgl} ${tglIndo.bln} ${tglIndo.thn}`;
+            let kategoriOrder = ['Salam Pagi', 'Pembaca Doa Masuk', 'Guru Piket', 'Pembaca Doa Pulang', 'Imam Solat Duhur', 'Lainnya'];
+            let abjad = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+
+            let htmlContent = '<html><head><title>Jadwal Piket '+hari+'</title><style>@media print { -webkit-print-color-adjust: exact; print-color-adjust: exact; } body { font-family: "Times New Roman", Times, serif; color: #000; } .piket-container { max-width: 850px; margin: 30px auto; } .piket-title { text-align: center; font-weight: bold; font-size: 16pt; margin-bottom: 40px; line-height: 1.3; color: #333; } .piket-title span { color: #666; font-size: 14pt; } .piket-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px 80px; } .kategori-wrap { margin-bottom: 20px; page-break-inside: avoid; } .kategori-title { font-weight: normal; font-size: 13pt; margin-bottom: 8px; display: flex; } .kategori-huruf { width: 25px; text-align: left; } .piket-table { width: calc(100% - 25px); margin-left: 25px; border-collapse: collapse; } .piket-table th, .piket-table td { border: 1px solid #000; padding: 6px 10px; font-size: 12pt; } .piket-table th { text-align: center; font-weight: bold; } .piket-table td.center { text-align: center; } </style></head><body>';
+            htmlContent += '<div class="piket-container"><div class="piket-title">Jadwal Piket<br><span>Hari '+tglFull+'</span></div><div class="piket-grid">';
+
+            let idx = 0;
+            kategoriOrder.forEach(kat => {
+                if(grouped[kat] && grouped[kat].length > 0) {
+                    htmlContent += '<div class="kategori-wrap"><div class="kategori-title"><div class="kategori-huruf">'+abjad[idx]+'.</div><div>'+kat+'</div></div><table class="piket-table"><tr><th width="40">No.</th><th>Nama</th></tr>';
+                    grouped[kat].forEach((nama, i) => { htmlContent += '<tr><td class="center">'+(i+1)+'</td><td>'+nama+'</td></tr>'; });
+                    htmlContent += '</table></div>';
+                    idx++;
+                }
+            });
+            
+            Object.keys(grouped).forEach(kat => {
+                if(!kategoriOrder.includes(kat) && grouped[kat].length > 0) {
+                    htmlContent += '<div class="kategori-wrap"><div class="kategori-title"><div class="kategori-huruf">'+abjad[idx]+'.</div><div>'+kat+'</div></div><table class="piket-table"><tr><th width="40">No.</th><th>Nama</th></tr>';
+                    grouped[kat].forEach((nama, i) => { htmlContent += '<tr><td class="center">'+(i+1)+'</td><td>'+nama+'</td></tr>'; });
+                    htmlContent += '</table></div>';
+                    idx++;
+                }
+            });
+
+            if(idx === 0) {
+                htmlContent += '<div style="grid-column: span 2; text-align:center; margin-top: 50px;">Tidak ada data jadwal piket untuk hari ini.</div>';
+            }
+
+            htmlContent += '</div></div><script>setTimeout(function(){ window.print(); window.close(); }, 500);<\/script></body></html>';
+            
+            let printWindow = window.open('', '_blank');
+            printWindow.document.write(htmlContent);
+            printWindow.document.close();
+        };
+
     </script>
 </body>
 </html>
