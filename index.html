@@ -339,7 +339,7 @@
             'UltahKaryawan': { category: 'Personalia', title: 'Ultah Karyawan', icon: 'fa-cake-candles', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'TanggalLahir', label: 'Tgl Lahir', type: 'date'},{key: 'Usia', label: 'Usia', type: 'readonly'},{key: 'NamaPegawai', label: 'Nama Pegawai', type: 'text'},{key: 'Divisi', label: 'Unit', type: 'text'},{key: 'UcapanBingkisan', label: 'Status Bingkisan', type: 'select', options: ['Belum Diberikan', 'Sudah Diberikan']}] },
             'KunjunganSosial': { category: 'Personalia', title: 'Kunjungan Sosial', icon: 'fa-hospital-user', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'Tanggal', label: 'Tgl Kunjungan', type: 'date'},{key: 'Jenis', label: 'Jenis', type: 'select', options: ['Sakit', 'Melahirkan', 'Takziah', 'Lainnya']},{key: 'NamaTujuan', label: 'Tujuan', type: 'text'},{key: 'AlamatRS', label: 'Alamat', type: 'text'},{key: 'NominalBarang', label: 'Nominal', type: 'text'},{key: 'Foto', label: 'Upload Foto', type: 'image'}] },
             'DataGuruTendik': { category: 'Data Staff', title: 'Data Guru Tendik', icon: 'fa-chalkboard-user', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'NamaLengkap', label: 'Nama', type: 'text'},{key: 'PendidikanTerakhir', label: 'Pendidikan', type: 'text'},{key: 'Status', label: 'Status', type: 'select', options: ['PNS', 'PPPPK Penuh Waktu', 'PPPK Paruh Waktu', 'GTT', 'PTT']},{key: 'Golongan', label: 'Golongan', type: 'text'},{key: 'NIP', label: 'NIP', type: 'text'},{key: 'Serdik', label: 'Serdik', type: 'text'},{key: 'NUPTK', label: 'NUPTK', type: 'text'},{key: 'MasukSejak', label: 'Masuk Sejak', type: 'date'},{key: 'LamaKerja', label: 'Lama Kerja', type: 'readonly'},{key: 'Jabatan', label: 'Jabatan', type: 'text'},{key: 'Kontak', label: 'Kontak', type: 'text'}] },
-            'JadwalPiket': { category: 'Data Staff', title: 'Jadwal Piket', icon: 'fa-clock-rotate-left', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'Hari', label: 'Hari', type: 'select', options: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat']},{key: 'KategoriTugas', label: 'Kategori Tugas', type: 'select', options: ['Salam Pagi', 'Pembaca Doa Masuk', 'Guru Piket', 'Pembaca Doa Pulang', 'Imam Solat Duhur', 'Lainnya']},{key: 'DaftarPetugas', label: 'Daftar Petugas', type: 'multi-select-guru'},{key: 'Keterangan', label: 'Keterangan Tambahan', type: 'text'}] },
+            'JadwalPiket': { category: 'Data Staff', title: 'Jadwal Piket', icon: 'fa-clock-rotate-left', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'Hari', label: 'Hari', type: 'select', options: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat']},{key: 'KategoriTugas', label: 'Kategori Tugas', type: 'select', options: ['Salam Pagi', 'Pembaca Doa Masuk', 'Guru Piket', 'Pembaca Doa Pulang', 'Imam Solat Duhur', 'Keputrian', 'Sholat Jumat Lantai 1', 'Sholat Jumat Lantai 2', 'Lainnya']},{key: 'Area', label: 'Tempat / Area', type: 'text'},{key: 'DaftarPetugas', label: 'Daftar Petugas', type: 'multi-select-guru'},{key: 'Keterangan', label: 'Keterangan Tambahan', type: 'text'}] },
             'JadwalObserver': { category: 'Data Staff', title: 'Jadwal Observer', icon: 'fa-eye', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'Tanggal', label: 'Tanggal', type: 'date'},{key: 'NamaObserver', label: 'Observer', type: 'text'},{key: 'GuruDiobservasi', label: 'Guru Diobservasi', type: 'text'},{key: 'KelasMapel', label: 'Mapel', type: 'text'},{key: 'Keterangan', label: 'Keterangan', type: 'text'}] },
             'Vendor': { category: 'Eksternal', title: 'Data Vendor', icon: 'fa-truck-fast', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'NamaInstansi', label: 'Vendor', type: 'text'},{key: 'KategoriInstansi', label: 'Kategori', type: 'text'},{key: 'KontakPerson', label: 'Kontak', type: 'text'},{key: 'BentukKerjasama', label: 'Kerjasama', type: 'text'},{key: 'Keterangan', label: 'Keterangan', type: 'textarea'}] },
             'Dokumentasi': { category: 'Eksternal', title: 'Dokumentasi Publikasi', icon: 'fa-camera-retro', columns: [{key: 'ID', label: 'ID', type: 'readonly', hideInForm: true, hideInTable: true},{key: 'Tanggal', label: 'Tanggal', type: 'date'},{key: 'NamaKegiatan', label: 'Nama Kegiatan', type: 'text'},{key: 'Deskripsi', label: 'Deskripsi', type: 'textarea'},{key: 'LinkMedia', label: 'Link Media', type: 'url'}] },
@@ -923,34 +923,41 @@
             let grouped = {};
             dataHariIni.forEach(d => {
                 let kat = d.KategoriTugas || 'Lainnya';
-                if(!grouped[kat]) grouped[kat] = [];
+                let title = d.Area ? kat + ' (' + d.Area + ')' : kat;
+                if(!grouped[title]) grouped[title] = [];
                 let petugasList = (d.DaftarPetugas || '').split(',').map(p => p.trim()).filter(p => p);
-                grouped[kat] = grouped[kat].concat(petugasList);
+                grouped[title] = grouped[title].concat(petugasList);
             });
 
             let tglIndo = window.formatDateIndo(tanggalStr);
             let tglFull = `${hari}, ${tglIndo.tgl} ${tglIndo.bln} ${tglIndo.thn}`;
-            let kategoriOrder = ['Salam Pagi', 'Pembaca Doa Masuk', 'Guru Piket', 'Pembaca Doa Pulang', 'Imam Solat Duhur', 'Lainnya'];
-            let abjad = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+            let kategoriOrder = ['Salam Pagi', 'Pembaca Doa Masuk', 'Guru Piket', 'Pembaca Doa Pulang', 'Imam Solat Duhur', 'Keputrian', 'Sholat Jumat Lantai 1', 'Sholat Jumat Lantai 2', 'Lainnya'];
+            let abjad = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'];
 
             let htmlContent = '<html><head><title>Jadwal Piket '+hari+'</title><style>@media print { -webkit-print-color-adjust: exact; print-color-adjust: exact; } body { font-family: "Times New Roman", Times, serif; color: #000; } .piket-container { max-width: 850px; margin: 30px auto; } .piket-title { text-align: center; font-weight: bold; font-size: 16pt; margin-bottom: 40px; line-height: 1.3; color: #333; } .piket-title span { color: #666; font-size: 14pt; } .piket-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px 80px; } .kategori-wrap { margin-bottom: 20px; page-break-inside: avoid; } .kategori-title { font-weight: normal; font-size: 13pt; margin-bottom: 8px; display: flex; } .kategori-huruf { width: 25px; text-align: left; } .piket-table { width: calc(100% - 25px); margin-left: 25px; border-collapse: collapse; } .piket-table th, .piket-table td { border: 1px solid #000; padding: 6px 10px; font-size: 12pt; } .piket-table th { text-align: center; font-weight: bold; } .piket-table td.center { text-align: center; } </style></head><body>';
             htmlContent += '<div class="piket-container"><div class="piket-title">Jadwal Piket<br><span>Hari '+tglFull+'</span></div><div class="piket-grid">';
 
+            let keysRendered = [];
             let idx = 0;
+            
             kategoriOrder.forEach(kat => {
-                if(grouped[kat] && grouped[kat].length > 0) {
-                    htmlContent += '<div class="kategori-wrap"><div class="kategori-title"><div class="kategori-huruf">'+abjad[idx]+'.</div><div>'+kat+'</div></div><table class="piket-table"><tr><th width="40">No.</th><th>Nama</th></tr>';
-                    grouped[kat].forEach((nama, i) => { htmlContent += '<tr><td class="center">'+(i+1)+'</td><td>'+nama+'</td></tr>'; });
-                    htmlContent += '</table></div>';
-                    idx++;
-                }
+                Object.keys(grouped).forEach(title => {
+                    if (title.startsWith(kat) && !keysRendered.includes(title)) {
+                        htmlContent += '<div class="kategori-wrap"><div class="kategori-title"><div class="kategori-huruf">'+abjad[idx]+'.</div><div>'+title+'</div></div><table class="piket-table"><tr><th width="40">No.</th><th>Nama</th></tr>';
+                        grouped[title].forEach((nama, i) => { htmlContent += '<tr><td class="center">'+(i+1)+'</td><td>'+nama+'</td></tr>'; });
+                        htmlContent += '</table></div>';
+                        keysRendered.push(title);
+                        idx++;
+                    }
+                });
             });
             
-            Object.keys(grouped).forEach(kat => {
-                if(!kategoriOrder.includes(kat) && grouped[kat].length > 0) {
-                    htmlContent += '<div class="kategori-wrap"><div class="kategori-title"><div class="kategori-huruf">'+abjad[idx]+'.</div><div>'+kat+'</div></div><table class="piket-table"><tr><th width="40">No.</th><th>Nama</th></tr>';
-                    grouped[kat].forEach((nama, i) => { htmlContent += '<tr><td class="center">'+(i+1)+'</td><td>'+nama+'</td></tr>'; });
+            Object.keys(grouped).forEach(title => {
+                if(!keysRendered.includes(title)) {
+                    htmlContent += '<div class="kategori-wrap"><div class="kategori-title"><div class="kategori-huruf">'+abjad[idx]+'.</div><div>'+title+'</div></div><table class="piket-table"><tr><th width="40">No.</th><th>Nama</th></tr>';
+                    grouped[title].forEach((nama, i) => { htmlContent += '<tr><td class="center">'+(i+1)+'</td><td>'+nama+'</td></tr>'; });
                     htmlContent += '</table></div>';
+                    keysRendered.push(title);
                     idx++;
                 }
             });
