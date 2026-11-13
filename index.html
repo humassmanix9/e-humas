@@ -579,11 +579,20 @@
             window.renderTable();
         };
 
+        window.moveRow = function(direction, rowIndex) {
+            window.startLoading('Memindahkan urutan...');
+            panggilBackend('swapRow', { sheetName: window.activeMenu, rowIndex: rowIndex, direction: direction })
+            .then(res => {
+                if(res.success) { window.fetchData(); } 
+                else { window.endLoading(); Swal.fire('Info', res.message, 'info'); }
+            }).catch(e => { window.endLoading(); Swal.fire('Error', String(e), 'error'); });
+        };
+
         window.renderTable = function() {
             const schema = window.SCHEMA[window.activeMenu];
             let html = '<div class="table-responsive"><table class="table table-hover align-middle m-0"><thead><tr><th class="text-center" width="60">No</th>';
             schema.columns.forEach(col => { if(col.hideInTable) return; html += '<th onclick="window.sortTable(\'' + col.key + '\')">' + col.label + ' <i class="fa-solid fa-sort ms-1 text-black-50"></i></th>'; });
-            html += '<th class="text-center" width="160">Aksi</th></tr></thead><tbody>';
+            html += '<th class="text-center" width="200">Aksi</th></tr></thead><tbody>';
 
             if (window.filteredData.length === 0) { html += '<tr><td colspan="' + (schema.columns.filter(c => !c.hideInTable).length + 2) + '" class="text-center py-5 text-muted">Belum ada data</td></tr>'; } 
             else {
@@ -594,11 +603,15 @@
                         if (col.type === 'url' && val !== '-') val = `<a href="${val}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1">Link</a>`; 
                         else if (col.type === 'image') val = (val !== '-' && val.startsWith('data:image')) ? `<img src="${val}" class="rounded shadow-sm" style="width:45px; height:45px; object-fit:cover;">` : '-'; 
                         else if (col.type === 'select' && val !== '-') { let badge = 'bg-secondary'; if (val.includes('Selesai') || val.includes('Aktif') || val.includes('Tercapai') || val.includes('Sudah')) badge = 'bg-success'; if (val.includes('Menunggu') || val.includes('Proses') || val.includes('Berjalan')) badge = 'bg-warning text-dark'; if (val.includes('Batal') || val.includes('Kadaluarsa') || val.includes('Tidak') || val.includes('Arsip')) badge = 'bg-danger'; val = `<span class="badge ${badge}">${val}</span>`; } 
-                        else if (col.type === 'textarea' && val !== '-') { let displayVal = val.length > 40 ? val.substring(0, 40) + '...' : val; val = `<span title="${val.replace(/"/g, '&quot;')}">${displayVal}</span>`; }
+                        else if (col.type === 'textarea' || col.type === 'multi-select-guru') { let displayVal = val.length > 40 ? val.substring(0, 40) + '...' : val; val = `<span title="${val.replace(/"/g, '&quot;')}">${displayVal}</span>`; }
                         html += `<td>${val}</td>`;
                     });
                     
-                    html += '<td class="text-center">';
+                    html += '<td class="text-center text-nowrap">';
+                    if(window.activeMenu === 'JadwalPiket') {
+                        html += `<button class="btn btn-sm btn-light border px-2 me-1 text-dark" onclick="window.moveRow('up', ${row._rowIndex})" title="Naikkan Urutan"><i class="fa-solid fa-arrow-up"></i></button>`;
+                        html += `<button class="btn btn-sm btn-light border px-2 me-1 text-dark" onclick="window.moveRow('down', ${row._rowIndex})" title="Turunkan Urutan"><i class="fa-solid fa-arrow-down"></i></button>`;
+                    }
                     if(window.activeMenu === 'Notulensi') {
                         html += `<button class="btn btn-sm btn-light border px-2 me-1 text-primary" onclick='window.bukaModalQR(${JSON.stringify(row)})'><i class="fa-solid fa-qrcode"></i></button>`;
                         html += `<button class="btn btn-sm btn-secondary border px-2 me-1" onclick='window.cetakDokumen(${JSON.stringify(row)}, "undangan")'><i class="fa-solid fa-envelope"></i></button>`;
@@ -629,7 +642,11 @@
                     html += `<label class="form-label fw-bold small text-muted mb-1">${col.label}</label><div class="d-flex align-items-center gap-3 mb-2"><img id="preview_${col.key}" src="${imgSrc}" class="${previewClass} rounded shadow-sm border" style="width:80px; height:80px; object-fit:cover;"><input type="file" class="form-control" accept="image/*" onchange="window.handleImageUpload(event, '${col.key}')"></div><input type="hidden" id="input_${col.key}" value="${val}">`;
                 } else if (col.type === 'multi-select-guru') {
                     let guruOptions = window.listGuruTendik || [];
-                    let selectedGurus = val ? val.split(', ') : [];
+                    let selectedGurus = [];
+                    if (val) {
+                        if (val.includes(' | ')) selectedGurus = val.split(' | ');
+                        else selectedGurus = val.split(', '); 
+                    }
                     html += `<label class="form-label fw-bold small text-muted mb-1">${col.label}</label><div class="border rounded p-2 form-control bg-light" style="max-height: 160px; overflow-y: auto;">`;
                     if(guruOptions.length === 0) html += '<small class="text-danger">Data Guru belum dimuat atau kosong.</small>';
                     guruOptions.forEach((guru, idx) => {
@@ -657,7 +674,7 @@
                             let schemaMulti = schema.columns.find(c => c.type === 'multi-select-guru');
                             if(schemaMulti) {
                                 let selected = Array.from(document.querySelectorAll('.guru-checkbox:checked')).map(c => c.value);
-                                document.getElementById('input_' + schemaMulti.key).value = selected.join(', ');
+                                document.getElementById('input_' + schemaMulti.key).value = selected.join(' | '); 
                             }
                         });
                     });
@@ -919,51 +936,41 @@
         };
 
         window.cetakPreviewPiket = function(hari, tanggalStr) {
-            let dataHariIni = window.currentData.filter(d => d.Hari === hari);
-            let grouped = {};
-            dataHariIni.forEach(d => {
-                let kat = d.KategoriTugas || 'Lainnya';
-                let title = d.Area ? kat + ' (' + d.Area + ')' : kat;
-                if(!grouped[title]) grouped[title] = [];
-                let petugasList = (d.DaftarPetugas || '').split(',').map(p => p.trim()).filter(p => p);
-                grouped[title] = grouped[title].concat(petugasList);
-            });
+            // Filter berdasarkan hari (Sudah menggunakan window.filteredData yang menghormati urutan hasil Drag)
+            let dataHariIni = window.filteredData.filter(d => d.Hari === hari);
 
             let tglIndo = window.formatDateIndo(tanggalStr);
             let tglFull = `${hari}, ${tglIndo.tgl} ${tglIndo.bln} ${tglIndo.thn}`;
-            let kategoriOrder = ['Salam Pagi', 'Pembaca Doa Masuk', 'Guru Piket', 'Pembaca Doa Pulang', 'Imam Solat Duhur', 'Keputrian', 'Sholat Jumat Lantai 1', 'Sholat Jumat Lantai 2', 'Lainnya'];
-            let abjad = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'];
+            let abjad = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
 
             let htmlContent = '<html><head><title>Jadwal Piket '+hari+'</title><style>@media print { -webkit-print-color-adjust: exact; print-color-adjust: exact; } body { font-family: "Times New Roman", Times, serif; color: #000; } .piket-container { max-width: 850px; margin: 30px auto; } .piket-title { text-align: center; font-weight: bold; font-size: 16pt; margin-bottom: 40px; line-height: 1.3; color: #333; } .piket-title span { color: #666; font-size: 14pt; } .piket-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px 80px; } .kategori-wrap { margin-bottom: 20px; page-break-inside: avoid; } .kategori-title { font-weight: normal; font-size: 13pt; margin-bottom: 8px; display: flex; } .kategori-huruf { width: 25px; text-align: left; } .piket-table { width: calc(100% - 25px); margin-left: 25px; border-collapse: collapse; } .piket-table th, .piket-table td { border: 1px solid #000; padding: 6px 10px; font-size: 12pt; } .piket-table th { text-align: center; font-weight: bold; } .piket-table td.center { text-align: center; } </style></head><body>';
             htmlContent += '<div class="piket-container"><div class="piket-title">Jadwal Piket<br><span>Hari '+tglFull+'</span></div><div class="piket-grid">';
 
-            let keysRendered = [];
-            let idx = 0;
-            
-            kategoriOrder.forEach(kat => {
-                Object.keys(grouped).forEach(title => {
-                    if (title.startsWith(kat) && !keysRendered.includes(title)) {
-                        htmlContent += '<div class="kategori-wrap"><div class="kategori-title"><div class="kategori-huruf">'+abjad[idx]+'.</div><div>'+title+'</div></div><table class="piket-table"><tr><th width="40">No.</th><th>Nama</th></tr>';
-                        grouped[title].forEach((nama, i) => { htmlContent += '<tr><td class="center">'+(i+1)+'</td><td>'+nama+'</td></tr>'; });
-                        htmlContent += '</table></div>';
-                        keysRendered.push(title);
-                        idx++;
-                    }
-                });
-            });
-            
-            Object.keys(grouped).forEach(title => {
-                if(!keysRendered.includes(title)) {
-                    htmlContent += '<div class="kategori-wrap"><div class="kategori-title"><div class="kategori-huruf">'+abjad[idx]+'.</div><div>'+title+'</div></div><table class="piket-table"><tr><th width="40">No.</th><th>Nama</th></tr>';
-                    grouped[title].forEach((nama, i) => { htmlContent += '<tr><td class="center">'+(i+1)+'</td><td>'+nama+'</td></tr>'; });
-                    htmlContent += '</table></div>';
-                    keysRendered.push(title);
-                    idx++;
-                }
-            });
-
-            if(idx === 0) {
+            if(dataHariIni.length === 0) {
                 htmlContent += '<div style="grid-column: span 2; text-align:center; margin-top: 50px;">Tidak ada data jadwal piket untuk hari ini.</div>';
+            } else {
+                dataHariIni.forEach((d, index) => {
+                    let kat = d.KategoriTugas || 'Lainnya';
+                    let title = d.Area ? kat + ' (' + d.Area + ')' : kat;
+                    
+                    let petugasList = [];
+                    if(d.DaftarPetugas) {
+                        // Memastikan split nama lama menggunakan "," tetap bisa jalan, dan data baru memakai " | "
+                        if(d.DaftarPetugas.includes(' | ')) petugasList = d.DaftarPetugas.split(' | ').map(p=>p.trim()).filter(p=>p);
+                        else petugasList = d.DaftarPetugas.split(',').map(p=>p.trim()).filter(p=>p); // Fallback lama
+                    }
+
+                    htmlContent += '<div class="kategori-wrap"><div class="kategori-title"><div class="kategori-huruf">'+(abjad[index]||'-')+'.</div><div>'+title+'</div></div><table class="piket-table"><tr><th width="40">No.</th><th>Nama</th></tr>';
+                    
+                    if(petugasList.length === 0) {
+                        htmlContent += '<tr><td colspan="2" class="center text-muted">- Kosong -</td></tr>';
+                    } else {
+                        petugasList.forEach((nama, i) => { 
+                            htmlContent += '<tr><td class="center">'+(i+1)+'</td><td>'+nama+'</td></tr>'; 
+                        });
+                    }
+                    htmlContent += '</table></div>';
+                });
             }
 
             htmlContent += '</div></div><script>setTimeout(function(){ window.print(); window.close(); }, 500);<\/script></body></html>';
